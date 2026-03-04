@@ -1,70 +1,119 @@
-# Getting Started with Create React App
+# TrendScout 🔍
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack eBay market research dashboard that lets sellers search live listings, analyze watch counts and pricing, and save products to a personal watchlist.
 
-## Available Scripts
+![TrendScout Screenshot](screenshot.png)
 
-In the project directory, you can run:
+## Live Demo
 
-### `npm start`
+🌐 [trendscout-frontend.vercel.app](https://trendscout-frontend.vercel.app)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **User Authentication** — Secure signup and login with JWT tokens
+- **eBay Product Search** — Search any product and see live listings with prices, watch counts, and condition
+- **Personal Watchlist** — Save products to your account for research tracking
+- **Notes** — Add and edit research notes on saved products
+- **Pagination** — Watchlist supports paginated results
+- **Ownership Enforcement** — Users can only access and modify their own data
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Frontend**
+- React 18
+- React Router v6
+- Context API for auth state
+- Deployed on Vercel
 
-### `npm run build`
+**Backend**
+- Python / Flask
+- Flask-JWT-Extended (token-based auth)
+- Flask-SQLAlchemy + Flask-Migrate
+- Flask-Bcrypt (password hashing)
+- Flask-CORS
+- Deployed on Railway
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Database**
+- PostgreSQL (production)
+- SQLite (development)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**External API**
+- eBay Browse API (OAuth 2.0 client credentials)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Data Model
 
-### `npm run eject`
+**User**
+- id, username, email, password_hash, created_at
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**SavedProduct** (belongs to User)
+- id, user_id, ebay_item_id, title, price, watch_count, image_url, notes, created_at
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## API Endpoints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | /api/auth/signup | Create new account | No |
+| POST | /api/auth/login | Login and get token | No |
+| GET | /api/auth/me | Get current user | Yes |
+| GET | /api/search?q={query} | Search eBay listings | Yes |
+| GET | /api/watchlist | Get user's watchlist | Yes |
+| POST | /api/watchlist | Save product to watchlist | Yes |
+| PATCH | /api/watchlist/:id | Update product notes | Yes |
+| DELETE | /api/watchlist/:id | Remove from watchlist | Yes |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Setup & Installation
 
-## Learn More
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- eBay Developer account (free at developer.ebay.com)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Backend Setup
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+cd backend
+pip install -r requirements.txt
+```
 
-### Code Splitting
+Create a `.env` file in the backend folder:
+```
+EBAY_CLIENT_ID=your_ebay_client_id
+EBAY_CLIENT_SECRET=your_ebay_client_secret
+JWT_SECRET_KEY=your_secret_key
+DATABASE_URL=sqlite:///trendscout.db
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Run migrations and start the server:
+```bash
+flask db upgrade
+python app.py
+```
 
-### Analyzing the Bundle Size
+Backend runs on `http://localhost:5555`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Frontend Setup
 
-### Making a Progressive Web App
+```bash
+cd frontend
+npm install
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Frontend runs on `http://localhost:3000`
 
-### Advanced Configuration
+## Core Functionality
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. **Sign up or log in** to get a JWT token stored in localStorage
+2. **Search** for any product — results are fetched live from eBay's Browse API
+3. **Save** interesting products to your personal watchlist with one click
+4. **Add notes** to saved products to track sourcing ideas or pricing observations
+5. **Remove** products from your watchlist when done researching
 
-### Deployment
+## Git History
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Development followed an incremental commit strategy:
+- Backend foundation (models, auth, CRUD)
+- eBay API integration
+- React frontend with protected routes
+- Styling and UI polish
+- Production deployment
