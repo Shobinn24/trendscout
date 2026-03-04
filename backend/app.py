@@ -22,7 +22,7 @@ def create_app():
     bcrypt.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    CORS(app)
+    CORS(app, origins=["https://trendscout-frontend.vercel.app"])
 
     from routes.auth import auth_bp
     from routes.watchlist import watchlist_bp
